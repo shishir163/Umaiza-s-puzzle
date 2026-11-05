@@ -20,7 +20,7 @@ Colourful puzzle PWA for Umaiza (Phase 1: no login, data saved on the device).
 - Parent area: edit profile, history (edit/delete), levels, certificates, print worksheets, backup.
 
 ## Updating later
-When you change any file, also change `V='uw-v3'` at the top of `sw.js` (e.g. `uw-v4`) so phones fetch the new version.
+When you change any file, also change `V='uw-v4'` at the top of `sw.js` (e.g. `uw-v5`) so phones fetch the new version.
 
 
 ## Levels (1-10)

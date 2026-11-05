@@ -3,6 +3,8 @@
   const { S } = W, { T, CATS, R, strip } = PZ, E = CERT.esc;
   const $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const app = () => $('#app');
+  // Book pictures: in the preview they sit in books/, on GitHub they were uploaded to the main folder.
+  const IMGDIR = window.UW_PREVIEW ? 'books/' : '';
   let BOOKITEMS = [], view = {}, G = null, editMode = false;
   let BOOKS = [
     { n: 1, name: 'Rainbow Starter', emoji: '🌈', color: '#ff6b6b' }, { n: 2, name: 'Sunshine Fun', emoji: '☀️', color: '#ffa94d' },
@@ -202,13 +204,13 @@
     app().innerHTML = topHtml(st) + '<div class="bookhead" style="--c:' + b.color + '"><button class="btn back" data-act="home">← Home</button><h1>' + b.emoji + ' Puzzle Book ' + n + ' · ' + b.name + '</h1><div class="bprog"><span class="bar"><i style="width:' + Math.round(done * 100 / bookTotal(n)) + '%"></i></span> ' + done + ' / ' + bookTotal(n) + ' done</div></div>' +
       '<div class="fchips">' + '<button class="fchip' + (f === 'all' ? ' on' : '') + '" data-act="bfilter" data-v="all">🌈 All ' + items.length + '</button>' + Object.keys(cats).map(k => '<button class="fchip' + (f === k ? ' on' : '') + '" data-act="bfilter" data-v="' + k + '" style="--c:' + cats[k].c + '">' + E(cats[k].n) + '</button>').join('') + '</div>' +
       '<div class="note">Solve on paper (press 🖨 Print) or by thinking, then check your answer!</div>' +
-      '<div class="bgrid">' + show.map(x => '<div class="bcard' + (st.bookDone[x.id] ? ' dn' : '') + '" style="--c:' + x.catCol + '" data-act="bopen" data-id="' + x.id + '"><div class="crop"><img loading="lazy" src="books/' + x.id + '.webp" alt=""></div><div class="bt"><b>#' + x.n + '</b> ' + E(x.title) + '</div><div class="bm">' + pips(x.lvl) + (st.bookDone[x.id] ? '<span class="ck">✅</span>' : '') + '</div></div>').join('') + '</div>';
+      '<div class="bgrid">' + show.map(x => '<div class="bcard' + (st.bookDone[x.id] ? ' dn' : '') + '" style="--c:' + x.catCol + '" data-act="bopen" data-id="' + x.id + '"><div class="crop"><img loading="lazy" src="' + IMGDIR + '' + x.id + '.webp" alt=""></div><div class="bt"><b>#' + x.n + '</b> ' + E(x.title) + '</div><div class="bm">' + pips(x.lvl) + (st.bookDone[x.id] ? '<span class="ck">✅</span>' : '') + '</div></div>').join('') + '</div>';
   }
   function renderBookPuzzle(id) {
     const x = BOOKITEMS.find(y => y.id === id); if (!x) return nav('home');
     const st = W.stats(), done = !!st.bookDone[id], idx = BOOKITEMS.indexOf(x), prev = BOOKITEMS[idx - 1], nxt = BOOKITEMS[idx + 1];
     app().innerHTML = topHtml(st) + '<div class="bpz" style="--c:' + x.catCol + '"><div class="playhead"><button class="btn back" data-act="openbook" data-n="' + x.book + '">← Book ' + x.book + '</button><div class="ptitle">#' + x.n + ' ' + E(x.title) + ' ' + pips(x.lvl) + '</div></div>' +
-      '<div class="qcard"><div class="prompt"><span>' + E(x.ins) + '</span></div><div class="cropw"><div class="crop" id="bcrop" style="padding-bottom:' + (x.h / 800 * 100) + '%"><img src="books/' + x.id + '.webp" alt=""></div></div>' +
+      '<div class="qcard"><div class="prompt"><span>' + E(x.ins) + '</span></div><div class="cropw"><div class="crop" id="bcrop" style="padding-bottom:' + (x.h / 800 * 100) + '%"><img src="' + IMGDIR + '' + x.id + '.webp" alt=""></div></div>' +
       '<div class="ansline" id="ansline" hidden>Answer: <b>' + E(x.ans) + '</b></div>' +
       '<div class="bbtns"><button class="btn" data-act="printb" data-id="' + id + '">🖨 Print puzzle</button><button class="btn big" id="chk" data-act="check" data-id="' + id + '">👀 Check my answer</button></div>' +
       '<div class="rate" id="rate" hidden><div>Did you get it right?</div><button class="btn big good" data-act="brate" data-id="' + id + '" data-v="1">✅ Yes, I did it!</button><button class="btn big alt" data-act="brate" data-id="' + id + '" data-v="0">🔁 Not yet</button></div>' +
@@ -362,7 +364,7 @@
     if (key) h += '<div class="ws brk"><div class="wsh"><div class="wst">Answer key · ' + t.name + ' · Level ' + lvl + '</div></div><div class="wsk">' + qs.map((q, i) => '<div><b>' + (i + 1) + '</b> ' + E(q.key || strip(q.opts ? q.opts[q.ans] : '')) + '</div>').join('') + '</div></div>';
     doPrint(h, false);
   }
-  const cropHtml = (id, h, bottom) => '<div class="pcrop" style="padding-bottom:' + (h / 800 * 100) + '%"><img src="books/' + id + '.webp" style="top:' + (bottom ? '-100%' : '0') + '"></div>';
+  const cropHtml = (id, h, bottom) => '<div class="pcrop" style="padding-bottom:' + (h / 800 * 100) + '%"><img src="' + IMGDIR + '' + id + '.webp" style="top:' + (bottom ? '-100%' : '0') + '"></div>';
   function printBooks(items, key) {
     let h = items.map(x => '<div class="bp brk"><div class="bph"><span>' + E(x.title) + ' <small>#' + x.n + ' · Book ' + x.book + '</small></span><span>Name: ' + E(S.profile.nick || '') + ' ______ Date: ______</span></div><div class="bpi">' + cropHtml(x.id, x.h) + '</div><div class="bpins">' + E(x.ins) + '</div></div>').join('');
     if (key) { h += '<div class="brk"><div class="wsh"><div class="wst">Answers</div></div><div class="bak">' + items.map(x => '<div class="ba"><b>Book ' + x.book + ' #' + x.n + ' ' + E(x.title) + '</b>' + cropHtml(x.id, x.h, true) + '<small>' + E(x.ans) + '</small></div>').join('') + '</div></div>'; }
